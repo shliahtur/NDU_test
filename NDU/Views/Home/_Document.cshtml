@@ -1,0 +1,101 @@
+﻿
+
+@model NDU.Models.Document  
+
+
+    <div id="printarea">
+
+
+        <h1>@Model.Name</h1>
+        <ul class="detail-list">
+            <li>
+                <span class="detail-header">Тип документа:</span>
+                @Model.Type
+            </li>
+
+            <li>
+                <span class="detail-header">Код за ЄДРПОУ відправника документа:</span>
+                @Model.EDPNOU
+            </li>
+
+            <li>
+                <span class="detail-header">Реєстраційний номер відправника:</span>
+                @Model.SenderId
+            </li>
+
+            <li>
+                <span class="detail-header">Реєстраційна дата відправника:</span>
+                @Model.SenderRegDate
+            </li>
+
+            <li>
+                <span class="detail-header">Дата подання документа:</span>
+                @Model.FilingDate
+            </li>
+
+            <li>
+                <span class="detail-header">Реєстраційний номер отримувача:</span>
+                @Model.RecipientId
+            </li>
+
+            <li>
+                <span class="detail-header">Дата подання документа:</span>
+                @Model.FilingDate
+            </li>
+
+            <li>
+                <span class="detail-header">Реєстраційна дата отримувача:</span>
+                @Model.RecipientRegDate
+            </li>
+
+            <li>
+                <span class="detail-header">Стан документа:</span>
+                @Model.DocState
+            </li>
+
+            <li>
+                <span class="detail-header">Дата розгляду документа:</span>
+                @Model.ConsiderationDate
+            </li>
+
+            <li>
+                <span class="detail-header">Доданий файл:</span>
+                @Model.FileName
+            </li>
+        </ul>
+
+        <a class="edit-icon detail-icon" asp-controller="Home" asp-action="EditDocument"
+           asp-route-id="@Model.Id"></a>
+        <a class="delete-icon detail-icon" asp-controller="Home" asp-action="DeleteDocument" asp-route-id="@Model.Id"
+           onclick="return confirm('Ви впевнені?')"></a>
+
+    </div>
+    <input id="btnprint" type="button" onclick="Prindiviv()" value="Друк" />
+
+    <script type="text/javascript">
+
+        function Prindiviv() {
+            var divToPrint = document.getElementById('printarea');
+            var popupWin = window.open('', '_blank', 'width=300,height=400,location=no,left=200px');
+            popupWin.document.open();
+            popupWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</html>');
+            popupWin.document.close();
+        }
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+            $(".details-link, .edit-icon").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+
+                });
+            });
+            $('.close-btn-menu').click(function () {
+                $('#modDialog').modal('hide');
+            })
+        })
+    </script>
+

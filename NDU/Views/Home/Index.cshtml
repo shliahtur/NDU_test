@@ -1,0 +1,112 @@
+﻿
+@model IEnumerable<Document>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<head>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+<a class="circle-btn" asp-controller="Home" asp-action="AddNewDocument"></a>
+<div>
+    <table id="docTable">
+        <thead>
+            <tr>
+                <th>Назва відправника документа</th>
+                <th class="no-sort">Тип документа</th>
+                <th class="no-sort">ЄДРПОУ</th>
+                <th class="no-sort">Реєстраційний номер відправника</th>
+                <th>Реєстраційна дата відправника</th>
+                <th>Дата подання документа</th>
+                <th class="no-sort">Реєстраційний номер отримувача</th>
+                <th>Реєстраційна дата отримувача</th>
+                <th>Стан документа</th>
+                <th>Дата розгляду документа</th>
+                <th class="no-sort">Доданий файл</th>
+                <th class="no-sort">Змінити</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doc in Model)
+            {
+                <tr>
+                    <td>
+                        <a class="details-link" asp-controller="Home" asp-action="Document"
+                           asp-route-id="@doc.Id">@doc.Name</a>
+                    </td>
+                    <td>@doc.Type</td>
+                    <td>@doc.EDPNOU</td>
+                    <td>@doc.SenderId</td>
+                    <td>@doc.SenderRegDate.ToString("d")</td>
+                    <td>@doc.FilingDate.ToString("d")</td>
+                    <td>@doc.RecipientId</td>
+                    <td>@doc.RecipientRegDate.ToString("d")</td>
+                    <td>@doc.DocState</td>
+                    <td>@doc.ConsiderationDate.ToString("d")</td>
+                    <td>@doc.FileName</td>
+                    <td style="text-align:center">
+                        <a class="edit-icon" asp-controller="Home" asp-action="EditDocument"
+                           asp-route-id="@doc.Id"></a>
+
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+    <a asp-controller="Home" id="excel-btn" asp-action="ExportToExcel">Зберігти в Excel</a>
+</div>
+
+@section scripts {
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#docTable').DataTable({
+                "bLengthChange": false,
+                "pageLength": 10,
+                "language": {
+                    "search": "",
+                    "searchPlaceholder": "Пошук",
+                    "zeroRecords": "Немає записів",
+                    "info": "_PAGE_ з _PAGES_",
+                    "infoEmpty": "Інформація відсутня",
+                    "paginate": {
+                        "first": "Перша",
+                        "previous": "Попередня",
+                        "next": "Наступна",
+                        "last": "Остання"
+                    }
+                },
+                columnDefs: [{
+                    orderable: false,
+                    targets: "no-sort"
+                }]
+            });
+
+            $(function () {
+                $.ajaxSetup({ cache: false });
+                $(".details-link, .edit-icon, .circle-btn").click(function (e) {
+
+                    e.preventDefault();
+                    $.get(this.href, function (data) {
+                        $('#dialogContent').html(data);
+                        $('#dialogContent').append('<div class="close-btn-menu"></div>');
+                        $('#modDialog').modal('show');
+                    });
+                });
+                $('.close-btn-menu').click(function () {
+                    $('#modDialog').modal('hide');
+                });
+            })
+        });
+    </script>
+
+}
